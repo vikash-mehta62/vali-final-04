@@ -226,3 +226,88 @@ export interface WeeklyFinancialData {
     other: number;
   };
 }
+
+// 🆕 Smart State-Based Management Types
+export interface StateWarehouse {
+  id: string;
+  state: string;
+  name: string;
+  address: Address;
+  capacity: number;
+  currentStock: number;
+  zones: WarehouseZone[];
+  deliveryRadius: number; // miles
+  operatingHours: {
+    open: string;
+    close: string;
+    timezone: string;
+  };
+  isActive: boolean;
+  manager?: string;
+  phone?: string;
+}
+
+export interface WarehouseZone {
+  id: string;
+  name: string; // "Receiving", "Cold Storage", "Dry Storage", "Shipping"
+  temperature?: number;
+  capacity: number;
+  products: string[]; // product IDs
+  currentUtilization: number;
+}
+
+export interface SmartRoute {
+  id: string;
+  state: string;
+  warehouse: string;
+  stops: RouteStop[];
+  optimizedDistance: number;
+  estimatedTime: number;
+  fuelCost: number;
+  driver?: string;
+  vehicle?: string;
+  status: 'planned' | 'in-progress' | 'completed' | 'cancelled';
+  createdAt: string;
+  scheduledDate: string;
+}
+
+export interface RouteStop {
+  orderId: string;
+  client: Client;
+  address: Address;
+  deliveryWindow: {
+    start: string;
+    end: string;
+  };
+  products: OrderItem[];
+  estimatedDuration: number; // minutes
+  priority: 'high' | 'medium' | 'low';
+  sequence: number;
+  status: 'pending' | 'completed' | 'failed';
+}
+
+export interface StateInventoryMetrics {
+  state: string;
+  totalInventoryValue: number;
+  totalProducts: number;
+  lowStockItems: number;
+  pendingOrders: number;
+  todayDeliveries: number;
+  routeEfficiency: number;
+  warehouseUtilization: number;
+}
+
+export interface InventoryTransfer {
+  id: string;
+  fromWarehouse: string;
+  toWarehouse: string;
+  products: {
+    productId: string;
+    quantity: number;
+    reason: string;
+  }[];
+  status: 'pending' | 'in-transit' | 'completed' | 'cancelled';
+  requestedBy: string;
+  createdAt: string;
+  estimatedArrival?: string;
+}

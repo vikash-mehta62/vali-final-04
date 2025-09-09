@@ -8,68 +8,68 @@ const mongoose = require("mongoose");
 
 
 const createProductCtrl = async (req, res) => {
-    try {
-        const {
-            name,
-            category,
-            quantity,
-            unit,
-            price,
-            threshold,
-            description,
-            enablePromotions,
-            palette,
-            weightVariation,
-            expiryDate,
-            batchInfo,
-            origin,
-            organic,
-            storageInstructions,
-            boxSize,
-            pricePerBox,
-            image,
-            shippinCost=0,
-            
-        } = req.body;
+  try {
+    const {
+      name,
+      category,
+      quantity,
+      unit,
+      price,
+      threshold,
+      description,
+      enablePromotions,
+      palette,
+      weightVariation,
+      expiryDate,
+      batchInfo,
+      origin,
+      organic,
+      storageInstructions,
+      boxSize,
+      pricePerBox,
+      image,
+      shippinCost = 0,
 
-console.log(req.body)
-      
-        if (!name || !category  || !price) {
-            return res.status(400).json({ success: false, message: "All required fields must be filled." });
-        }
+    } = req.body;
 
-        const newProduct = new productModel({
-            name,
-            category,
-            quantity,
-            unit,
-            price,
-            threshold,
-            description: description || "N/A",
-            enablePromotions,
-            palette,
-            weightVariation,
-            expiryDate,
-            batchInfo,
-            origin,
-            organic,
-            shippinCost,
-            storageInstructions,
-            boxSize,
-            pricePerBox,
-            image: image,
-          
-        });
+    console.log(req.body)
 
-        const product = await newProduct.save();
-
-        await categoryModel.findByIdAndUpdate(category, { $push: { products: product._id } });
-
-        res.status(201).json({ success: true, message: "Product created successfully", product });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ success: false, message: "Error in create product API", error: error.message });
+    if (!name || !category || !price) {
+      return res.status(400).json({ success: false, message: "All required fields must be filled." });
     }
+
+    const newProduct = new productModel({
+      name,
+      category,
+      quantity,
+      unit,
+      price,
+      threshold,
+      description: description || "N/A",
+      enablePromotions,
+      palette,
+      weightVariation,
+      expiryDate,
+      batchInfo,
+      origin,
+      organic,
+      shippinCost,
+      storageInstructions,
+      boxSize,
+      pricePerBox,
+      image: image,
+
+    });
+
+    const product = await newProduct.save();
+
+    await categoryModel.findByIdAndUpdate(category, { $push: { products: product._id } });
+
+    res.status(201).json({ success: true, message: "Product created successfully", product });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ success: false, message: "Error in create product API", error: error.message });
+  }
 };
 
 const getAllProductCtrl = async (req, res) => {
@@ -224,217 +224,217 @@ const getAllProductCtrl = async (req, res) => {
 //   }
 // };
 
-  
+
 
 
 
 
 
 const getSingleProductCtrl = async (req, res) => {
-    try {
-        const { id } = req.params;
+  try {
+    const { id } = req.params;
 
-        const product = await productModel.findById(id);
-        return res.status(200).json({
-            success: true,
-            product
-        })
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "Error in getting product API!",
-        });
-    }
+    const product = await productModel.findById(id);
+    return res.status(200).json({
+      success: true,
+      product
+    })
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error in getting product API!",
+    });
+  }
 }
 
 
 const deleteProductCtrl = async (req, res) => {
-    try {
-        const { id } = req.params;
-      
-        const existProduct = await productModel.findById(id);
-        if (!existProduct) {
-            return res.status(400).json({
-                success: false,
-                message: "Product Not Found",
-            });
-        }
+  try {
+    const { id } = req.params;
 
-
-        await productModel.findByIdAndDelete(id);
-
-        return res.status(200).json({
-            success: true,
-            message: "Product deleted successfully!",
-        });
-    } catch (error) {
-        console.log(error)
-        return res.status(500).json({
-            success: false,
-            message: "Error in deleting Product API!",
-        });
+    const existProduct = await productModel.findById(id);
+    if (!existProduct) {
+      return res.status(400).json({
+        success: false,
+        message: "Product Not Found",
+      });
     }
+
+
+    await productModel.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Product deleted successfully!",
+    });
+  } catch (error) {
+    console.log(error)
+    return res.status(500).json({
+      success: false,
+      message: "Error in deleting Product API!",
+    });
+  }
 };
 
 
 const updateProductCtrl = async (req, res) => {
-    try {
-        const {
-            name,
-            category,
-            quantity,
-            unit,
-            price,
-            threshold,
-            description,
-            enablePromotions,
-            palette,
-            weightVariation,
-            expiryDate,
-            batchInfo,
-            origin,
-            organic,
-            storageInstructions,
-            boxSize,
-            pricePerBox,
-            image,
-            shippinCost,
-            totalPurchase
-        } = req.body;
+  try {
+    const {
+      name,
+      category,
+      quantity,
+      unit,
+      price,
+      threshold,
+      description,
+      enablePromotions,
+      palette,
+      weightVariation,
+      expiryDate,
+      batchInfo,
+      origin,
+      organic,
+      storageInstructions,
+      boxSize,
+      pricePerBox,
+      image,
+      shippinCost,
+      totalPurchase
+    } = req.body;
 
-        const { id } = req.params;
+    const { id } = req.params;
 
-        if (!id) {
-            return res.status(400).json({
-                success: false,
-                message: "Product ID is required",
-            });
-        }
-
-        const product = await productModel.findById(id);
-        if (!product) {
-            return res.status(404).json({
-                success: false,
-                message: "Product not found",
-            });
-        }
-
-        product.name = name || product.name;
-        product.category = category || product.category;
-        product.quantity = quantity || product.quantity;
-        product.unit = unit || product.unit;
-        product.price = price || product.price;
-        product.threshold = threshold || product.threshold;
-        product.description = description || product.description;
-        product.enablePromotions = enablePromotions ?? product.enablePromotions;
-        product.palette = palette || product.palette;
-        product.weightVariation = weightVariation || product.weightVariation;
-        product.expiryDate = expiryDate || product.expiryDate;
-        product.batchInfo = batchInfo || product.batchInfo;
-        product.origin = origin || product.origin;
-        product.organic = organic ?? product.organic;
-        product.storageInstructions = storageInstructions || product.storageInstructions;
-        product.boxSize = boxSize || product.boxSize;
-        product.pricePerBox = pricePerBox || product.pricePerBox;
-        product.image = image;
-        product.shippinCost = shippinCost;
-        product.totalPurchase = totalPurchase;
-
-        await product.save();
-
-        return res.status(200).json({
-            success: true,
-            message: "Product Updated Successfully!",
-            product,
-        });
-    } catch (error) {
-        console.error("Error updating product:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Error in updating product API!",
-        });
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "Product ID is required",
+      });
     }
+
+    const product = await productModel.findById(id);
+    if (!product) {
+      return res.status(404).json({
+        success: false,
+        message: "Product not found",
+      });
+    }
+
+    product.name = name || product.name;
+    product.category = category || product.category;
+    product.quantity = quantity || product.quantity;
+    product.unit = unit || product.unit;
+    product.price = price || product.price;
+    product.threshold = threshold || product.threshold;
+    product.description = description || product.description;
+    product.enablePromotions = enablePromotions ?? product.enablePromotions;
+    product.palette = palette || product.palette;
+    product.weightVariation = weightVariation || product.weightVariation;
+    product.expiryDate = expiryDate || product.expiryDate;
+    product.batchInfo = batchInfo || product.batchInfo;
+    product.origin = origin || product.origin;
+    product.organic = organic ?? product.organic;
+    product.storageInstructions = storageInstructions || product.storageInstructions;
+    product.boxSize = boxSize || product.boxSize;
+    product.pricePerBox = pricePerBox || product.pricePerBox;
+    product.image = image;
+    product.shippinCost = shippinCost;
+    product.totalPurchase = totalPurchase;
+
+    await product.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Product Updated Successfully!",
+      product,
+    });
+  } catch (error) {
+    console.error("Error updating product:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error in updating product API!",
+    });
+  }
 };
 
 
 const updateProductPrice = async (req, res) => {
-    try {
-        const priceUpdates = req.body; // Expected: { 'id1': price1, 'id2': price2, ... }
+  try {
+    const priceUpdates = req.body; // Expected: { 'id1': price1, 'id2': price2, ... }
 
-       
 
-        const updatePromises = Object.entries(priceUpdates).map(([id, price]) =>
-            productModel.findByIdAndUpdate(id, { pricePerBox:price }, { new: true })
-        );
 
-        // Wait for all updates to complete
-        const updatedProducts = await Promise.all(updatePromises);
+    const updatePromises = Object.entries(priceUpdates).map(([id, price]) =>
+      productModel.findByIdAndUpdate(id, { pricePerBox: price }, { new: true })
+    );
 
-        // Filter out null values in case any product wasn't found
-        const successfulUpdates = updatedProducts.filter(product => product !== null);
+    // Wait for all updates to complete
+    const updatedProducts = await Promise.all(updatePromises);
 
-        if (successfulUpdates.length === 0) {
-            return res.status(404).json({
-                success: false,
-                message: "No products found for the given IDs!",
-            });
-        }
+    // Filter out null values in case any product wasn't found
+    const successfulUpdates = updatedProducts.filter(product => product !== null);
 
-        return res.status(200).json({
-            success: true,
-            message: "Product prices updated successfully!",
-            updatedProducts
-        });
-
-    } catch (error) {
-        console.error("Error updating product prices:", error);
-        return res.status(500).json({
-            success: false,
-            message: "Error updating product prices!",
-        });
+    if (successfulUpdates.length === 0) {
+      return res.status(404).json({
+        success: false,
+        message: "No products found for the given IDs!",
+      });
     }
+
+    return res.status(200).json({
+      success: true,
+      message: "Product prices updated successfully!",
+      updatedProducts
+    });
+
+  } catch (error) {
+    console.error("Error updating product prices:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Error updating product prices!",
+    });
+  }
 };
 
 const bulkDiscountApply = async (req, res) => {
-    try {
-        const { formData, product } = req.body;
+  try {
+    const { formData, product } = req.body;
 
-        // 🔹 Validation: Check if formData & product array exist
-        if (!Array.isArray(formData) || formData.length === 0) {
-            return res.status(400).json({ success: false, message: "No products selected. Please select at least one product." });
-        }
-        if (!Array.isArray(product) || product.length === 0) {
-            return res.status(400).json({ success: false, message: "Invalid discount data. Please provide at least one discount." });
-        }
-
-        // 🔹 Extract product IDs
-        const productIds = formData.map(item => item._id);
-
-        // 🔹 Update products with bulk discounts
-        const updatedProducts = await productModel.updateMany(
-            { _id: { $in: productIds } }, // Match multiple products
-            {
-                $set: {
-                    bulkDiscount: product, // Set discount array
-                    lastUpdated: new Date()
-                }
-            }
-        );
-
-        // 🔹 Response Handling
-        if (updatedProducts.modifiedCount === 0) {
-            return res.status(404).json({ success: false, message: "No products updated. Make sure the product IDs are correct." });
-        }
-
-        return res.status(200).json({
-            success: true,
-            message: `Bulk discounts applied successfully to ${updatedProducts.modifiedCount} products.`,
-        });
-
-    } catch (error) {
-        console.error("Error updating bulk discounts:", error);
-        res.status(500).json({ success: false, message: "Internal Server Error. Please try again later." });
+    // 🔹 Validation: Check if formData & product array exist
+    if (!Array.isArray(formData) || formData.length === 0) {
+      return res.status(400).json({ success: false, message: "No products selected. Please select at least one product." });
     }
+    if (!Array.isArray(product) || product.length === 0) {
+      return res.status(400).json({ success: false, message: "Invalid discount data. Please provide at least one discount." });
+    }
+
+    // 🔹 Extract product IDs
+    const productIds = formData.map(item => item._id);
+
+    // 🔹 Update products with bulk discounts
+    const updatedProducts = await productModel.updateMany(
+      { _id: { $in: productIds } }, // Match multiple products
+      {
+        $set: {
+          bulkDiscount: product, // Set discount array
+          lastUpdated: new Date()
+        }
+      }
+    );
+
+    // 🔹 Response Handling
+    if (updatedProducts.modifiedCount === 0) {
+      return res.status(404).json({ success: false, message: "No products updated. Make sure the product IDs are correct." });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: `Bulk discounts applied successfully to ${updatedProducts.modifiedCount} products.`,
+    });
+
+  } catch (error) {
+    console.error("Error updating bulk discounts:", error);
+    res.status(500).json({ success: false, message: "Internal Server Error. Please try again later." });
+  }
 }
 
 
@@ -443,85 +443,85 @@ const bulkDiscountApply = async (req, res) => {
 
 // ✅ Create Task
 exports.createTask = async (req, res) => {
-    try {
-        const { assignedTo, title, description, dueDate, priority, progress, status } = req.body;
+  try {
+    const { assignedTo, title, description, dueDate, priority, progress, status } = req.body;
 
-        // 🛑 Validation
-        if (!title || title.length < 3) return res.status(400).json({ success: false, message: "Title must be at least 3 characters long." });
-        if (!description || description.length < 5) return res.status(400).json({ success: false, message: "Description must be at least 5 characters long." });
-        if (!dueDate || isNaN(new Date(dueDate))) return res.status(400).json({ success: false, message: "Invalid due date." });
-        if (priority && !["low", "medium", "high", "urgent", ""].includes(priority.toLowerCase())) return res.status(400).json({ success: false, message: "Invalid priority." });
+    // 🛑 Validation
+    if (!title || title.length < 3) return res.status(400).json({ success: false, message: "Title must be at least 3 characters long." });
+    if (!description || description.length < 5) return res.status(400).json({ success: false, message: "Description must be at least 5 characters long." });
+    if (!dueDate || isNaN(new Date(dueDate))) return res.status(400).json({ success: false, message: "Invalid due date." });
+    if (priority && !["low", "medium", "high", "urgent", ""].includes(priority.toLowerCase())) return res.status(400).json({ success: false, message: "Invalid priority." });
 
-        // ✅ Save to Database
-        const task = new Task({ assignedTo, title, description, dueDate, priority, progress, status });
-        await task.save();
+    // ✅ Save to Database
+    const task = new Task({ assignedTo, title, description, dueDate, priority, progress, status });
+    await task.save();
 
-        res.status(201).json({ success: true, message: "Task created successfully", task });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+    res.status(201).json({ success: true, message: "Task created successfully", task });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // ✅ Get All Tasks
 exports.getAllTasks = async (req, res) => {
-    try {
-        const tasks = await Task.find().populate("assignedTo").exec();
-        res.json({ success: true, tasks });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+  try {
+    const tasks = await Task.find().populate("assignedTo").exec();
+    res.json({ success: true, tasks });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 
 
 // ✅ Update Task
 exports.updateTask = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const updateData = req.body;
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
 
-        const task = await Task.findById(id);
-        if (!task) return res.status(404).json({ success: false, message: "Task not found" });
+    const task = await Task.findById(id);
+    if (!task) return res.status(404).json({ success: false, message: "Task not found" });
 
-        // ✅ Update valid fields
-        Object.keys(updateData).forEach((key) => {
-            if (updateData[key] !== undefined) task[key] = updateData[key];
-        });
+    // ✅ Update valid fields
+    Object.keys(updateData).forEach((key) => {
+      if (updateData[key] !== undefined) task[key] = updateData[key];
+    });
 
-        await task.save();
-        res.json({ success: true, message: "Task updated successfully", task });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+    await task.save();
+    res.json({ success: true, message: "Task updated successfully", task });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 
 exports.deleteTask = async (req, res) => {
-    try {
-        const { id } = req.params;
-        const task = await Task.findByIdAndDelete(id);
+  try {
+    const { id } = req.params;
+    const task = await Task.findByIdAndDelete(id);
 
-        if (!task) return res.status(404).json({ success: false, message: "Task not found" });
+    if (!task) return res.status(404).json({ success: false, message: "Task not found" });
 
-        res.json({ success: true, message: "Task deleted successfully" });
-    } catch (error) {
-        res.status(500).json({ success: false, message: error.message });
-    }
+    res.json({ success: true, message: "Task deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 // Get products for a specific store
 exports.getProductsByStore = async (req, res) => {
   try {
     const { storeId } = req.params;
-    
+
     if (!storeId) {
       return res.status(400).json({ success: false, message: "Store ID is required" });
     }
-    
+
     // You would need to implement the logic to get products for a specific store
     // This is just a placeholder implementation
     const products = await Product.find({ store: storeId }).populate('category').exec();
-    
+
     res.status(200).json({ success: true, products });
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });
@@ -692,11 +692,11 @@ const resetAllProductStats = async () => {
 
 const resetAndRebuildHistoryFromOrders = async () => {
   try {
-  
+
     // const fromDate = new Date(Date.UTC(2025, 5, 14, 0, 0, 0)); // 2025-06-16
     // const toDate = new Date(Date.UTC(2025, 5, 19, 0, 0, 0));   // 2025-06-17
-const fromDate = new Date("2025-06-14T00:00:00.000Z");
-const toDate = new Date("2030-06-19T23:59:59.999Z");
+    const fromDate = new Date("2025-06-14T00:00:00.000Z");
+    const toDate = new Date("2030-06-19T23:59:59.999Z");
 
     // STEP 1: Get all orders for 16 June
     const orders = await Order.find({
@@ -805,7 +805,7 @@ const resetSalesForLastTwoDays = async () => {
     const products = await Product.find();
 
 
-    
+
     for (const product of products) {
       let unitSellDeleted = 0;
       let totalSellDeleted = 0;
@@ -855,7 +855,7 @@ const resetSalesForLastTwoDays = async () => {
 
 
 
-       for (const product of products) {
+    for (const product of products) {
       // Filter quantityTrash
       product.quantityTrash = product.quantityTrash.filter(trash => {
         const trashDate = new Date(trash.date);
@@ -863,13 +863,13 @@ const resetSalesForLastTwoDays = async () => {
       });
 
 
-        product.manuallyAddBox.quantity = 0;
-        product.manuallyAddBox.date = null;
- 
+      product.manuallyAddBox.quantity = 0;
+      product.manuallyAddBox.date = null;
 
-        product.manuallyAddUnit.quantity = 0;
-        product.manuallyAddUnit.date = null;
-      
+
+      product.manuallyAddUnit.quantity = 0;
+      product.manuallyAddUnit.date = null;
+
 
       await product.save();
       console.log(`🧼 Cleaned trash/manual additions for: ${product.name}`);
@@ -888,8 +888,8 @@ const resetSalesForLastTwoDays = async () => {
 
 const resetAndRebuildHistoryForSingleProduct = async (productId, fromDateStr, toDateStr) => {
   try {
-   const fromDate = new Date("2025-06-30T00:00:00.000Z");
-const toDate = new Date("2030-06-22T23:59:59.999Z");
+    const fromDate = new Date("2025-06-30T00:00:00.000Z");
+    const toDate = new Date("2030-06-22T23:59:59.999Z");
     // STEP 1: Find the product
     const product = await Product.findById(productId);
     if (!product) {
@@ -1096,36 +1096,43 @@ const getAllProductsWithHistorySummary = async (req, res) => {
       sortBy = 'updatedAt', // Default sort
       sortOrder = 'desc',
       stockLevel = 'all', // "low", "out", "high", "all"
-      hard=false
+      hard = false,
     } = req.query;
 
-
-    if(hard === "true"){
-      await resetAndRebuildHistoryForAllProducts()
+    if (hard === "true") {
+      await resetAndRebuildHistoryForAllProducts();
     }
-   
+
+    // Date filters
     const fromDate = startDate ? new Date(`${startDate}T00:00:00.000Z`) : null;
     const toDate = endDate ? new Date(`${endDate}T23:59:59.999Z`) : null;
-// Create UTC-safe Monday and Sunday
-const now = new Date();
-const day = now.getUTCDay(); // 0 (Sun) to 6 (Sat)
-const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((day + 6) % 7), 0, 0, 0));
-const sunday = new Date(Date.UTC(monday.getUTCFullYear(), monday.getUTCMonth(), monday.getUTCDate() + 6, 23, 59, 59, 999));
 
+    // Create UTC-safe Monday and Sunday
+    const now = new Date();
+    const day = now.getUTCDay(); // 0 (Sun) to 6 (Sat)
+    const monday = new Date(
+      Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() - ((day + 6) % 7), 0, 0, 0)
+    );
+    const sunday = new Date(
+      Date.UTC(monday.getUTCFullYear(), monday.getUTCMonth(), monday.getUTCDate() + 6, 23, 59, 59, 999)
+    );
 
-// Format to 'YYYY-MM-DD' only
-const formatDate = (date) => date.toISOString().split("T")[0];
+    // Format to 'YYYY-MM-DD' only (with null safety)
+    const formatDate = (date) => (date ? date.toISOString().split("T")[0] : null);
 
-const isUsingDefaultDate =
-  formatDate(fromDate) === formatDate(monday) &&
-  formatDate(toDate) === formatDate(sunday);
+    // Default date check safely
+    const isUsingDefaultDate =
+      (!fromDate && !toDate) ||
+      (formatDate(fromDate) === formatDate(monday) &&
+        formatDate(toDate) === formatDate(sunday));
 
-
+    // Helper: check if date is within range
     const isWithinRange = (date) => {
       const d = new Date(date);
       return (!fromDate || d >= fromDate) && (!toDate || d <= toDate);
     };
 
+    // Filter
     const filter = {};
     if (search) {
       filter.name = { $regex: search, $options: "i" };
@@ -1134,70 +1141,56 @@ const isUsingDefaultDate =
       filter.category = categoryId;
     }
 
-    // Apply pagination
+    // Pagination
     const skip = (parseInt(page) - 1) * parseInt(limit);
 
-    // Fetch matching products
+    // Fetch products
     let products = await Product.find(filter).lean();
 
-    // Map with date-based summary
-    let productsWithSummary = products.map(product => {
-      const hasDateFilter = fromDate || toDate;
+    // Map with summary
+    let productsWithSummary = products.map((product) => {
+      const filteredPurchase = isUsingDefaultDate
+        ? product?.purchaseHistory || []
+        : product?.purchaseHistory?.filter((p) => isWithinRange(p.date)) || [];
 
-      if (true) {
-        const filteredPurchase = isUsingDefaultDate
-    ? product?.purchaseHistory || []
-    : product?.purchaseHistory?.filter(p => isWithinRange(p.date)) || [];
-        const filteredSell = product?.salesHistory?.filter(s => isWithinRange(s.date)) || [];
-        const filteredUnitPurchase = product?.lbPurchaseHistory?.filter(p => isWithinRange(p.date)) || [];
-        const filteredUnitSell = product?.lbSellHistory?.filter(s => isWithinRange(s.date)) || [];
-        const filteredTrash = product?.quantityTrash?.filter(t => isWithinRange(t.date)) || [];
+      const filteredSell = product?.salesHistory?.filter((s) => isWithinRange(s.date)) || [];
+      const filteredUnitPurchase = product?.lbPurchaseHistory?.filter((p) => isWithinRange(p.date)) || [];
+      const filteredUnitSell = product?.lbSellHistory?.filter((s) => isWithinRange(s.date)) || [];
+      const filteredTrash = product?.quantityTrash?.filter((t) => isWithinRange(t.date)) || [];
 
-        const trashBox = filteredTrash.filter(t => t.type === "box").reduce((sum, t) => sum + t.quantity, 0);
-        const trashUnit = filteredTrash.filter(t => t.type === "unit").reduce((sum, t) => sum + t.quantity, 0);
+      const trashBox = filteredTrash.filter((t) => t.type === "box").reduce((sum, t) => sum + t.quantity, 0);
+      const trashUnit = filteredTrash.filter((t) => t.type === "unit").reduce((sum, t) => sum + t.quantity, 0);
 
+      const totalPurchase = filteredPurchase.reduce((sum, p) => sum + p.quantity, 0);
+      const totalSell = filteredSell.reduce((sum, s) => sum + s.quantity, 0);
+      const unitPurchase = filteredUnitPurchase.reduce((sum, p) => sum + p.weight, 0);
+      const unitSell = filteredUnitSell.reduce((sum, s) => sum + s.weight, 0);
 
-       
-        const totalPurchase = filteredPurchase.reduce((sum, p) => sum + p.quantity, 0);
-        const totalSell = filteredSell.reduce((sum, s) => sum + s.quantity, 0);
-        const unitPurchase = filteredUnitPurchase.reduce((sum, p) => sum + p.weight, 0);
-        const unitSell = filteredUnitSell.reduce((sum, s) => sum + s.weight, 0);
+      const totalRemaining = Math.max(
+        totalPurchase - totalSell - trashBox + (product?.manuallyAddBox?.quantity || 0),
+        0
+      );
+      const unitRemaining = Math.max(
+        unitPurchase - unitSell - trashUnit + (product?.manuallyAddUnit?.quantity || 0),
+        0
+      );
 
-
-        // console.log(product.manuallyAddUnit.quantity)
-        const totalRemaining = Math.max( totalPurchase - totalSell - trashBox + (product?.manuallyAddBox?.quantity || 0));
-        const unitRemaining = Math.max( unitPurchase - unitSell - trashUnit + (product?.manuallyAddUnit?.quantity || 0));
-
-        return {
-          ...product,
-          summary: {
-            totalPurchase,
-            totalSell,
-            totalRemaining,
-            unitPurchase,
-            unitSell,
-            unitRemaining,
-          }
-        };
-      }
-
-      // If no date filter, use stored summary
       return {
         ...product,
         summary: {
-          totalPurchase: product.totalPurchase || 0,
-          totalSell: product.totalSell || 0,
-          totalRemaining: product.remaining || 0,
-          unitPurchase: product.unitPurchase || 0,
-          unitSell: product.unitSell || 0,
-          unitRemaining: product.unitRemaining || 0,
-        }
+          totalPurchase,
+          totalSell,
+          totalRemaining,
+          unitPurchase,
+          unitSell,
+          unitRemaining,
+        },
       };
     });
 
-    // Apply stockLevel filtering after summary calculation
+    // Stock filtering
     if (stockLevel !== "all") {
-      productsWithSummary = productsWithSummary.filter(p => {
+      productsWithSummary = productsWithSummary.filter((p) => {
         const remaining = p.summary?.totalRemaining || 0;
         if (stockLevel === "low") return remaining <= 5 && remaining > 0;
         if (stockLevel === "out") return remaining === 0;
@@ -1214,13 +1207,13 @@ const isUsingDefaultDate =
       else return fieldA < fieldB ? 1 : -1;
     });
 
-    // Total count after filtering
+    // Total count
     const total = sortedProducts.length;
 
-    // Paginate the sorted, filtered result
+    // Paginate
     const paginated = sortedProducts.slice(skip, skip + parseInt(limit));
 
-    // Send response
+    // Response
     res.status(200).json({
       success: true,
       data: paginated,
@@ -1229,12 +1222,12 @@ const isUsingDefaultDate =
       limit: parseInt(limit),
       totalPages: Math.ceil(total / limit),
     });
-
   } catch (error) {
     console.error("❌ Error fetching product summaries:", error);
     res.status(500).json({ success: false, message: "Server Error" });
   }
 };
+
 
 
 
@@ -1298,7 +1291,7 @@ const getWeeklyOrdersByProductCtrl = async (req, res) => {
     orders.forEach(order => {
       const buyerName = order.store?.storeName || order.store?.ownerName || "Unknown";
 
-   
+
       order.items.forEach(item => {
         if (
           item.productId?.toString() === productId &&
@@ -1391,7 +1384,7 @@ const addToManually = async (req, res) => {
   try {
     const { productId, quantity, type, } = req.body;
 
-    if (!productId  || !type) {
+    if (!productId || !type) {
       return res.status(400).json({
         success: false,
         message: "Missing required fields.",
@@ -1532,7 +1525,7 @@ const resetAndRebuildHistoryForSingleProductCtrl = async (req, res) => {
   try {
     const { productId } = req.params;
     const { from, to } = req.query;
-console.log(req.params)
+    console.log(req.params)
     if (!productId) {
       return res.status(400).json({ error: 'Product ID is required' });
     }
@@ -1621,20 +1614,25 @@ console.log(req.params)
 };
 
 
-module.exports = { 
-    createProductCtrl, 
-    getAllProductCtrl, 
-    getSingleProductCtrl, 
-    deleteProductCtrl, 
-    updateProductCtrl, 
-    updateProductPrice, 
-    bulkDiscountApply,
-    getWeeklyOrdersByProductCtrl,
-    updateTotalSellForAllProducts,
-    getAllProductsWithHistorySummary,
-    addToTrash,
-    resetAndRebuildHistoryForSingleProductCtrl,
-    compareProductSalesWithOrders,
-    addToManually
-
+module.exports = {
+  createProductCtrl,
+  getAllProductCtrl,
+  getSingleProductCtrl,
+  deleteProductCtrl,
+  updateProductCtrl,
+  updateProductPrice,
+  bulkDiscountApply,
+  getWeeklyOrdersByProductCtrl,
+  updateTotalSellForAllProducts,
+  getAllProductsWithHistorySummary,
+  addToTrash,
+  resetAndRebuildHistoryForSingleProductCtrl,
+  compareProductSalesWithOrders,
+  addToManually,
+  resetAllProductStats,
+  resetAndRebuildHistoryFromOrders,
+  resetSalesForLastTwoDays,
+  resetAndRebuildHistoryForSingleProduct,
+  deleteOrdersForLastTwoDays,
+  resetAndRebuildHistoryForAllProducts
 };

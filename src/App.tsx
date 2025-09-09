@@ -47,6 +47,12 @@ import VendorPayment from "./pages/VendorPayment";
 import EditPurchaseOrder from "./pages/EditPurchaseOrder";
 import ViewPurchaseOrder from "./pages/ViewPurchase";
 import Map from "./components/admin/Map";
+import StateInventoryDashboard from "./components/warehouse/StateInventoryDashboard";
+import WarehouseSetup from "./components/warehouse/WarehouseSetup";
+import OrderInventoryManagement from "./pages/OrderInventoryManagement";
+import TestDashboard from "./pages/TestDashboard";
+import SimpleStateInventory from "./pages/SimpleStateInventory";
+import AdvancedAnalytics from "./pages/AdvancedAnalytics";
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -363,6 +369,54 @@ export default function App() {
           element={
             <PrivateRoute>
               <Map />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/warehouse/state-inventory"
+          element={
+            <PrivateRoute>
+              <StateInventoryDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/warehouse/setup"
+          element={
+            <PrivateRoute>
+              <WarehouseSetup />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/order-inventory-management"
+          element={
+            <PrivateRoute>
+              <OrderInventoryManagement />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/test-dashboard"
+          element={
+            <PrivateRoute>
+              <TestDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/simple-state-inventory"
+          element={
+            <PrivateRoute>
+              <SimpleStateInventory />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/advanced-order-analytics"
+          element={
+            <PrivateRoute>
+              <AdvancedAnalytics />
             </PrivateRoute>
           }
         />

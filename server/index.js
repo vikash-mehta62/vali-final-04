@@ -20,10 +20,20 @@ app.use(bodyParser.json({ limit: "500mb" }));
 app.use(bodyParser.urlencoded({ extended: true, limit: "500mb" }));
 
 app.use(cookieParser());
-app.use(cors({
-  origin: "*",
-  credentials: true,
-}))
+const allowedOrigins = ["http://localhost:3000", "http://127.0.0.1:3000"];
+
+app.use(
+  cors({
+    origin: (origin, callback) => {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  })
+);
 
 app.use(
   fileUpload({
@@ -50,6 +60,8 @@ app.use("/api/v1/pricing", require("./routes/groupPricing"))
 app.use("/api/v1/vendors", require("./routes/vendorRoute"))
 app.use("/api/v1/purchase-orders", require("./routes/purchaseOrderRoute"))
 app.use("/api/v1/credit-memo", require("./routes/creditMemosRoute"))
+app.use("/api/v1/warehouse", require("./routes/warehouseRoute"))
+app.use("/api/v1/product-location", require("./routes/productLocationRoute"))
 
 
 

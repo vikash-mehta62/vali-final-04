@@ -50,6 +50,31 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
       icon: <Package size={18} />,
     },
     {
+      name: "State Inventory",
+      path: "/warehouse/state-inventory",
+      icon: <LocateIcon size={18} />,
+    },
+    {
+      name: "Order & Inventory Hub",
+      path: "/order-inventory-management",
+      icon: <ShoppingCart size={18} />,
+    },
+    {
+      name: "Advanced Analytics",
+      path: "/advanced-order-analytics",
+      icon: <Zap size={18} />,
+    },
+    {
+      name: "Test Dashboard",
+      path: "/test-dashboard",
+      icon: <Settings size={18} />,
+    },
+    {
+      name: "Simple State View",
+      path: "/simple-state-inventory",
+      icon: <LocateIcon size={18} />,
+    },
+    {
       name: "Members",
       path: "/admin/members",
       icon: <Users size={18} />,
@@ -89,6 +114,11 @@ const Sidebar: React.FC<SidebarProps> = ({ isOpen, onClose }) => {
             name: "Orders",
             path: "/admin/orders",
             icon: <ShoppingCart size={18} />,
+          },
+          {
+            name: "Advanced Analytics",
+            path: "/advanced-order-analytics",
+            icon: <Zap size={18} />,
           },
         ]
       : []),

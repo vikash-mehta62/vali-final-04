@@ -90,7 +90,7 @@ const loginCtrl = async (req, res) => {
       user.token = token;
       user.password = undefined;
       const options = {
-        expires: new Date(Date.now() + 2 * 1000), // 2 seconds
+        expires: new Date(Date.now() + 2 * 24 * 60 * 60 * 1000), // Fix: 2 days instead of 2 seconds
         httpOnly: true,
       };
 

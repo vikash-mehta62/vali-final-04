@@ -1,7 +1,5 @@
 
-// const BASE_URL = "http://localhost:8080/api/v1"
-// const BASE_URL = "https://api.valiproduce.shop/api/v1"
-const BASE_URL = import.meta.env.VITE_APP_BASE_URL;
+const BASE_URL = "http://localhost:8080/api/v1"
 
 export const endpoints = {
   LOGIN_API: BASE_URL + "/auth/login",
@@ -148,6 +146,19 @@ export const purchaseOrder = {
 };
 
 
+
+export const customer = {
+  GET_ALL_CUSTOMERS: BASE_URL + "/customers/all",
+  GET_CUSTOMER: BASE_URL + "/customers/single", // append /:id
+  CREATE_CUSTOMER: BASE_URL + "/customers/create",
+  UPDATE_CUSTOMER: BASE_URL + "/customers/update", // append /:id
+  DELETE_CUSTOMER: BASE_URL + "/customers/delete", // append /:id
+  GET_CUSTOMER_ORDERS: BASE_URL + "/customers/orders", // append /:customerId
+  GET_CUSTOMER_ANALYTICS: BASE_URL + "/customer/analytics", // append /:customerId
+  GET_CUSTOMER_INSIGHTS: BASE_URL + "/customer", // append /:customerId/insights
+  SEARCH_CUSTOMERS: BASE_URL + "/customers/search",
+  BULK_UPDATE_STATUS: BASE_URL + "/customers/bulk-status"
+};
 
 export const creditmemos = {
   CREATE_CREDIT_MEMO: BASE_URL + "/credit-memo/create",
