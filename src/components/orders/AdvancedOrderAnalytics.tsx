@@ -96,69 +96,99 @@ const AdvancedOrderAnalytics: React.FC = () => {
     custom: 'Custom Range'
   };
 
+
+ 
+ 
   // Fetch real data only
 const fetchData = async () => {
   setLoading(true);
 
   try {
-    // 1️⃣ Fetch products (no auth required)
+    // 1️⃣ Fetch products
     const productsResponse = await getAllProductSummaryAPI('?limit=5000');
     const products = productsResponse?.data || [];
 
-    // Initialize orders & customers
-    let orders: any[] = [];
     let customers: any[] = [];
 
-    // 2️⃣ Fetch orders if token is available
-    if (token) {
-      try {
-        const ordersResponse = await getAllOrderAPI(token, '?limit=10000');
-        orders = ordersResponse?.orders || [];
-      } catch (orderError) {
-        console.warn('Could not fetch orders (auth required):', orderError);
+    // 2️⃣ Fetch members/customers
+    try {
+      const membersData = await getAllMembersAPI();
+      const filteredData = membersData?.filter((member) => member.role === 'store') || [];
+
+      // 3️⃣ For each customer, fetch their orders
+  const customersWithOrders = await Promise.all(
+  filteredData.map(async (customer) => {
+    try {
+      const orderData = await userWithOrderDetails(customer._id);
+      const orders = orderData.orders || [];
+
+      // ✅ Last Order Date
+      let lastOrderDate = null;
+      if (orders.length > 0) {
+        lastOrderDate = new Date(
+          Math.max(...orders.map((o) => new Date(o.createdAt).getTime()))
+        );
       }
 
-      // 3️⃣ Fetch members/customers
-      try {
-        const membersData = await getAllMembersAPI();
-        const filteredData = membersData?.filter((member) => member.role === 'store') || [];
+      // ✅ Orders in last 7 days
+      const now = new Date();
+      const sevenDaysAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+      const ordersThisWeek = orders.filter(
+        (o) => new Date(o.createdAt) >= sevenDaysAgo && new Date(o.createdAt) <= now
+      ).length;
 
-        customers = filteredData.map(({ _id, ...rest }) => ({
-          id: _id,
-          ...rest,
-        }));
-        console.log(customers, "checks")
-      } catch (customerError) {
-        console.error('Error fetching members:', customerError);
-        customers = [];
-      }
+      return {
+        id: customer._id,
+        ...customer,
+        orders,
+        totalOrders: orderData.totalOrders || 0,
+        totalSpent: orderData.totalSpent || 0,
+        balanceDue: orderData.balanceDue || 0,
+        lastOrderDate,
+        ordersPerWeek: ordersThisWeek // direct count of last 7 days
+      };
+    } catch (orderError) {
+      console.error(`Error fetching orders for ${customer._id}:`, orderError);
+      return {
+        id: customer._id,
+        ...customer,
+        orders: [],
+        totalOrders: 0,
+        totalSpent: 0,
+        balanceDue: 0,
+        lastOrderDate: null,
+        ordersPerWeek: 0
+      };
+    }
+  })
+);
+
+
+      customers = customersWithOrders;
+      console.log(customers, "✅ Customers with orders + last order + orders/week");
+
+    } catch (customerError) {
+      console.error('Error fetching members:', customerError);
+      customers = [];
     }
 
-    // 4️⃣ Console log everything
-    console.log('📊 Fetched real data:', {
-      orders: orders.length,
-      products: products.length,
-      customers, // here you can see all customers
-    });
-
-    // 5️⃣ Set state
-    setAllOrders(orders);
+    // 4️⃣ Set state
     setAllProducts(products);
     setAllCustomers(customers);
 
-    // 6️⃣ Generate analytics
+    // Optional: Generate analytics if needed
+    const allOrders = customers.flatMap((c) => c.orders);
     const analyticsData = generateAnalytics(
-      orders,
+      allOrders,
       products,
       selectedTimeframe,
       selectedState,
       selectedRoute
-    ); 
+    );
     setAnalytics(analyticsData);
 
   } catch (error) {
     console.error('Error fetching data:', error);
-    setAllOrders([]);
     setAllProducts([]);
     setAllCustomers([]);
     setAnalytics(null);
@@ -166,6 +196,7 @@ const fetchData = async () => {
     setLoading(false);
   }
 };
+
 
 const getQuantitySold = (salesHistory: { quantity: number }[]) => {
   return salesHistory?.reduce((total, sale) => total + (sale.quantity ?? 0), 0) ?? 0;
@@ -230,6 +261,21 @@ const getQuantitySold = (salesHistory: { quantity: number }[]) => {
       reorderSuggestions
     };
   };
+
+//    const fetchUserDetailsOrder = async () => {
+//     try {
+//       const res = await userWithOrderDetails("682351600bb47bb6f3a7f24e")
+//       console.log(res, "customer order")
+     
+//     } catch (error) {
+      
+//     }
+//   }
+
+//   useEffect(() =>{
+// fetchUserDetailsOrder()
+//   },[])
+
 
   // Filter orders by timeframe
   const filterOrdersByTimeframe = (orders: any[], timeframe: string) => {
@@ -920,7 +966,7 @@ const getQuantitySold = (salesHistory: { quantity: number }[]) => {
                         </div>
                       </div>
                     </td>
-                    <td className="text-right p-2">{orderFrequency}</td>
+<td className="text-right p-2">{customer?.ordersPerWeek ?? 0}</td>
                     <td className="text-right p-2 font-medium">
                       {totalSpent === 'N/A' ? 'N/A' : `$${totalSpent.toLocaleString()}`}
                     </td>
